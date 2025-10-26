@@ -6121,9 +6121,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
     private boolean firstAppUpdateCheck = true;
     public void checkAppUpdate(boolean force, Browser.Progress progress) {
-        if (!ApplicationLoader.isStandaloneBuild() && !ApplicationLoader.isBetaBuild()) {
-            return;
-        }
         if (!force && !BuildVars.CHECK_UPDATES) {
             return;
         }
@@ -6152,7 +6149,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             return;
         }
         final int accountNum = currentAccount;
-        if (progress != null) progress.init();
         UpdateHelper.getInstance().checkNewVersionAvailable((res, error) -> {
             SharedConfig.lastUpdateCheckTime = System.currentTimeMillis();
             SharedConfig.saveConfig();

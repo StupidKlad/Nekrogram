@@ -13,6 +13,7 @@ import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
@@ -61,7 +62,9 @@ public abstract class BaseRemoteHelper {
                 " " +
                 LocaleController.getSystemLocaleStringIso639() +
                 " " +
-                NekoConfig.isChineseUser;
+                NekoConfig.isChineseUser +
+                " " +
+                SharedConfig.pushString;
     }
 
     protected String getJSON() {
@@ -70,6 +73,10 @@ public abstract class BaseRemoteHelper {
         if (TextUtils.isEmpty(json)) {
             load();
             return null;
+        }
+        var updateTime = preferences.getLong(tag + "_update_time", 0);
+        if (Math.abs(System.currentTimeMillis() - updateTime) > 24 * 60 * 60 * 1000) {
+            load();
         }
         return json;
     }
@@ -91,6 +98,21 @@ public abstract class BaseRemoteHelper {
             preferences.edit()
                     .putLong(tag + "_update_time", System.currentTimeMillis())
                     .putString(tag, json)
+                    .apply();
+        }
+    }
+
+    public void onLoadSuccess(String result) {
+        var tag = getRequestMethod();
+        if (result == null) {
+            preferences.edit()
+                    .remove(tag + "_update_time")
+                    .remove(tag)
+                    .apply();
+        } else {
+            preferences.edit()
+                    .putLong(tag + "_update_time", System.currentTimeMillis())
+                    .putString(tag, result)
                     .apply();
         }
     }
