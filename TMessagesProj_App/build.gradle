@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation project(':TMessagesProj')
-    implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
 }
 
 android {
