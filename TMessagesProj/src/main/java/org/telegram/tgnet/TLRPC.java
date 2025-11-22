@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import tw.nekomimi.nekogram.helpers.WebAppHelper;
-import tw.nekomimi.nekogram.helpers.remote.ConfigHelper;
 
 import me.vkryl.core.BitwiseUtils;
 
@@ -11162,7 +11161,6 @@ public class TLRPC {
                     result.available_reactions = new TL_chatReactionsNone();
                 }
             }
-            ConfigHelper.overrideChatFull(result);
             return result;
         }
     }
@@ -42132,9 +42130,7 @@ public class TLRPC {
                     result = new TL_chatForbidden();
                     break;
             }
-            result = TLdeserialize(Chat.class, result, stream, constructor, exception);
-            ConfigHelper.overrideChat(result);
-            return result;
+            return TLdeserialize(Chat.class, result, stream, constructor, exception);
         }
 
         protected static TL_chatBannedRights mergeBannedRights(TL_channelBannedRights_layer92 rights) {

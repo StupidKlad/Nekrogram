@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.FileLog;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.tgnet.tl.TL_bots;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,79 +80,30 @@ public class ConfigHelper extends BaseRemoteHelper {
         return newsItems;
     }
 
-    public static void overrideChat(TLRPC.Chat chat) {
-        Config config = getInstance().getConfig();
-        if (config == null || config.chatOverrides == null) {
-            return;
-        }
-        config.chatOverrides.forEach(chatOverride -> {
-            if (chatOverride.id == chat.id) {
-                if (chatOverride.statusEmojiId != null) {
-                    var status = new TLRPC.TL_emojiStatus();
-                    status.document_id = chatOverride.statusEmojiId;
-                    chat.flags |= 512;
-                    chat.emoji_status = status;
-                }
-                if (chatOverride.colorId != null || chatOverride.backgroundEmojiId != null) {
-                    var color = new TLRPC.TL_peerColor();
-                    if (chatOverride.colorId != null) {
-                        color.flags |= 1;
-                        color.color = chatOverride.colorId;
-                    }
-                    if (chatOverride.backgroundEmojiId != null) {
-                        color.flags |= 2;
-                        color.background_emoji_id = chatOverride.backgroundEmojiId;
-                    }
-                    chat.flags |= 128;
-                    chat.color = color;
-                }
-                if (chatOverride.profileColorId != null || chatOverride.profileBackgroundEmojiId != null) {
-                    var color = new TLRPC.TL_peerColor();
-                    if (chatOverride.profileColorId != null) {
-                        color.flags |= 1;
-                        color.color = chatOverride.profileColorId;
-                    }
-                    if (chatOverride.profileBackgroundEmojiId != null) {
-                        color.flags |= 2;
-                        color.background_emoji_id = chatOverride.profileBackgroundEmojiId;
-                    }
-                    chat.flags |= 256;
-                    chat.profile_color = color;
-                }
-                if (chatOverride.botVerificationEmojiId != null) {
-                    chat.flags2 |= 8192;
-                    chat.bot_verification_icon = chatOverride.botVerificationEmojiId;
-                }
-            }
-        });
-    }
-
-    public static void overrideChatFull(TLRPC.ChatFull chatFull) {
-        Config config = getInstance().getConfig();
-        if (config == null || config.chatOverrides == null) {
-            return;
-        }
-        config.chatOverrides.forEach(chatOverride -> {
-            if (chatOverride.id == chatFull.id) {
-                if (chatOverride.botVerificationEmojiId != null) {
-                    var verification = new TL_bots.botVerification();
-                    verification.icon = chatOverride.botVerificationEmojiId;
-                    verification.description = chatOverride.botVerificationDescription;
-                    chatFull.flags2 |= 131072;
-                    chatFull.bot_verification = verification;
-                }
-            }
-        });
-    }
+    private Config config;
 
     private Config getConfig() {
-        String string = getInstance().getJSON();
+        if (config == null) {
+            var json = getInstance().getJSON();
+            if (json == null) {
+                return null;
+            }
+            try {
+                config = GSON.fromJson(json, Config.class);
+            } catch (Throwable t) {
+                FileLog.e(t);
+            }
+        }
+        return config;
+    }
+
+    @Override
+    public void onLoadSuccess(String result) {
+        super.onLoadSuccess(result);
         try {
-            return GSON.fromJson(string, Config.class);
+            config = GSON.fromJson(result, Config.class);
         } catch (Throwable t) {
             FileLog.e(t);
-            getInstance().load();
-            return null;
         }
     }
 

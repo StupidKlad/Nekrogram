@@ -86,19 +86,11 @@ public abstract class BaseRemoteHelper {
     }
 
     protected void onLoadSuccess(ArrayList<TLRPC.BotInlineResult> results, Delegate delegate) {
-        var tag = getRequestMethod();
         var result = !results.isEmpty() ? results.get(0) : null;
         if (result == null) {
-            preferences.edit()
-                    .remove(tag + "_update_time")
-                    .remove(tag)
-                    .apply();
+            onLoadSuccess(null);
         } else {
-            var json = getTextFromInlineResult(result);
-            preferences.edit()
-                    .putLong(tag + "_update_time", System.currentTimeMillis())
-                    .putString(tag, json)
-                    .apply();
+            onLoadSuccess(getTextFromInlineResult(result));
         }
     }
 
@@ -121,14 +113,19 @@ public abstract class BaseRemoteHelper {
         load(null);
     }
 
+    private boolean loading;
+
     public void load(Delegate delegate) {
         var botInfo = Extra.getHelperBot();
         if (botInfo == null) {
             return;
         }
+        if (loading) return;
+        loading = true;
         getInlineBotHelper().query(botInfo,
                 getRequestMethod() + getRequestParams() + getRequestExtra(),
                 (results, error) -> {
+                    loading = false;
                     if (error == null) {
                         onLoadSuccess(results, delegate);
                     } else {
