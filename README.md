@@ -7,6 +7,7 @@
 
 - Вебсайт: *скора*
 - Телеграм-канал: *завтра*
+- Баги: https://github.com/StupidKlad/Necrogram/issues
 
 ## Установка
 
