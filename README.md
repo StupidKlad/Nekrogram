@@ -8,20 +8,24 @@
 - Вебсайт: *скора*
 - Телеграм-канал: *завтра*
 
+## Установка
+
+Пока билдов нет, надо компилировать :(
+
 ## Докуменитация API и протоколов
 
 Документация Telegram API: https://core.telegram.org/api
 
 Документация протокола MTProto: https://core.telegram.org/mtproto
 
-## Гайд на компиляцию своими ручками для чайников
+## Гайд на компиляцию и форк Некрограма
 
-1. Download the Nekogram source code ( `git clone https://github.com/Nekogram/Nekogram.git` )
-1. Fill out storeFile, storePassword, keyAlias, keyPassword in local.properties to access your release.keystore
-1. Go to https://console.firebase.google.com/, create two android apps with application IDs tw.nekomimi.nekogram and tw.nekomimi.nekogram.beta, turn on firebase messaging and download `google-services.json`, which should be copied into `TMessagesProj` folder.
-1. Open the project in the Studio (note that it should be opened, NOT imported).
-1. Fill out values in `TMessagesProj/src/main/java/tw/nekomimi/nekogram/Extra.java` – there’s a link for each of the variables showing where and which data to obtain.
-1. You are ready to compile Nekogram.
+1. Скачай код ( `git clone https://github.com/StupidKlad/Necrogram.git` или тупо zip-файлик с Gitgub).
+1. Заполни storeFile, storePassword, keyAlias, keyPassword в local.properties чтобы получить твой release.keystore
+1. Иди в https://console.firebase.google.com/, создай два приложения Android с ID tw.nekomimi.nekogram и tw.nekomimi.nekogram.beta, включи общение через Firebase (firebase messaging) и скачай `google-services.json`, который должен быит скопирован в папку `TMessagesProj`.
+1. Открой всё это в Android Studio (именно открой, <ins>**НЕ** ипортируй</ins>).
+1. Заполни циферки и буковки в `TMessagesProj/src/main/java/tw/nekomimi/nekogram/Extra.java` – там есть ссылка с каждыми переменнами, показывая где и какую фигню они могут тебе показывать.
+1. Поздровляем! Можно теперь компилировать и перенести твой замечательный проект на телефоны.
 
 ## Локализация
 
